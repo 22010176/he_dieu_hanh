@@ -4,12 +4,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#include "./utils.c"
 
 
 int main() {
     int Number = 5;
-    int* ptr = mmap(NULL, Number * sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANON, 0, 0);
+    int* ptr = mmap(NULL, Number * sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | 0x20, 0, 0);
 
     if (ptr == MAP_FAILED) {
         printf("Mapping Failed\n");
@@ -29,6 +28,7 @@ int main() {
         // child
         for (int i = 0; i < Number; i++) ptr[i] = ptr[i] * 5;
 
+        munmap(ptr, Number * sizeof(int));
     }
     else {
         // parent
@@ -39,7 +39,6 @@ int main() {
         printf("\n");
     }
 
-    munmap(ptr, Number * sizeof(int));
 
 
     // if (err != 0) {
