@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/mman.h>
+#include <bits/mman-linux.h>
+#include "utils.c"
 
 #define _p printf
 
@@ -23,28 +25,25 @@ void P(int i, void (*F)(), void(*f)()) {
 }
 
 void ChildProcess() {
+    int* val = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANON, 0, 0);
+    *val = 0;
+
     int pid = fork();
-    // waitpid(0, NULL, 0);
-    // waitpid(pid, NULL, 0);
-    // sleep(1);
 
     wait(NULL);
     // printf("%d %d\n", pid, a);
     if (pid == 0) {
-        _p("%d. %9d %d\n", 1, pid, getpid());
-        c += 10;
-        exit(0);
+        printf("Child");
+        *val = 10;
     }
     else if (pid > 0) {
-        _p("%d. %9d %d\n", 2, pid, getpid());
+        wait(NULL);
+        _p("%d\n", *val);
     }
-    printf("c = %d\n", c);
-    // printf("\n");
-
-
+    munmap(val, sizeof(int));
 }
 
 int main() {
     ChildProcess();
-    printf("%d\n", c);
+
 }

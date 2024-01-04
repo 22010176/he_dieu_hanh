@@ -4,6 +4,18 @@
         "stdbool.h": "c",
         "mman-linux.h": "c",
         "dirent.h": "c",
-        "mman.h": "c"
+        "mman.h": "c",
+        "utils.h": "c",
+        "stdlib.h": "c",
+        "processmemory.h": "c",
+        "array": "c",
+        "bitset": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "ranges": "c",
+        "span": "c",
+        "regex": "c",
+        "utility": "c",
+        "valarray": "c"
     }
 }
