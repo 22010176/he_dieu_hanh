@@ -14,6 +14,6 @@ ps -a
 echo "enter the pid:"
 read pid
 
-kill -9 $pid
+kill -9 $pid # SIGKILL
 
 echo "finished"
