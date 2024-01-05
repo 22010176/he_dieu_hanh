@@ -5,45 +5,32 @@
 #include <sys/wait.h>
 #include <sys/mman.h>
 #include <bits/mman-linux.h>
-#include "utils.c"
 
-#define _p printf
+#include "utils/utils.h"
 
-bool lock = true;
-int c = 90;
-bool TestAndSet(bool* val) {
-    bool temp = *val;
-    *val = true;
-    return temp;
+
+void Process(void* data) {
+    // printf("Good\n");
+    // wait(NULL);
+    int a = 88;
+    SaveMem(data, (char*)&a, 4);
+    // printArr(data, 4);
 }
 
-void P(int i, void (*F)(), void(*f)()) {
-    while (TestAndSet(&lock));
-    F();
-    lock = false;
-    f();
-}
-
-void ChildProcess() {
-    int* val = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANON, 0, 0);
-    *val = 0;
-
-    int pid = fork();
-
-    wait(NULL);
-    // printf("%d %d\n", pid, a);
-    if (pid == 0) {
-        printf("Child");
-        *val = 10;
-    }
-    else if (pid > 0) {
-        wait(NULL);
-        _p("%d\n", *val);
-    }
-    munmap(val, sizeof(int));
-}
 
 int main() {
-    ChildProcess();
+    // int d = 0x10560041;
+    void* data = GetMem(NULL, 4);
+
+    int child_pid = fork();
+    if (child_pid == 0) {
+        fork();
+        Process(data);
+    }
+    else if (child_pid > 0) {
+        wait(NULL);
+        printArr(data, 4);
+    }
+
 
 }

@@ -1,52 +1,45 @@
-#include <stdio.h>
-#include <sys/mman.h>
-#include <bits/mman-linux.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
+// C program to show thread functions 
 
-void* GetMem(size_t size) {
-    return mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED | 0x20, 0, 0);
+#include <pthread.h> 
+#include <stdio.h> 
+#include <stdlib.h> 
+
+void* func(void* arg) {
+    // detach the current thread 
+    // from the calling thread 
+    pthread_detach(pthread_self());
+
+    printf("Inside the thread\n");
+
+    // exit the current thread 
+    pthread_exit(NULL);
 }
 
+void fun() {
+    pthread_t ptid;
+
+    // Creating a new thread 
+    pthread_create(&ptid, NULL, &func, NULL);
+    printf("This line may be printed before thread terminates\n");
+
+    // The following line terminates 
+    // the thread manually 
+    // pthread_cancel(ptid); 
+
+    // Compare the two threads created 
+    if (pthread_equal(ptid, pthread_self())) printf("Threads are equal\n");
+    else printf("Threads are not equal\n");
+
+    // Waiting for the created thread to terminate 
+    pthread_join(ptid, NULL);
+
+    printf("This line will be printed after thread ends\n");
+
+    pthread_exit(NULL);
+}
+
+// Driver code
 int main() {
-    int Number = 5;
-    int* ptr = mmap(NULL, Number * sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | 0x20, 0, 0);
-
-    if (ptr == MAP_FAILED) {
-        printf("Mapping Failed\n");
-        return 1;
-    }
-
-    for (int i = 0; i < Number; i++) ptr[i] = i + 7;
-
-
-    printf("Initial array's values:");
-    for (int i = 0; i < Number; i++) printf(" %d", ptr[i]);
-
-    printf("\n");
-    pid_t child_pid = fork();
-
-    if (child_pid == 0) {
-        // child
-        for (int i = 0; i < Number; i++) ptr[i] = ptr[i] * 5;
-
-        munmap(ptr, Number * sizeof(int));
-    }
-    else {
-        // parent
-        wait(NULL);
-        printf("\nParent:\n");
-        printf("Updated array's values:");
-        for (int i = 0; i < Number; i++) printf(" %d", ptr[i]);
-        printf("\n");
-    }
-
-
-
-    // if (err != 0) {
-    //     printf("Unmapping Failed\n");
-    //     return 1;
-    // }
+    fun();
     return 0;
 }
