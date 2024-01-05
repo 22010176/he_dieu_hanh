@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+void* GetMem(size_t size) {
+    return mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED | 0x20, 0, 0);
+}
 
 int main() {
     int Number = 5;
