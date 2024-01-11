@@ -5,8 +5,10 @@
 #include <sys/wait.h>
 #include <sys/mman.h>
 #include <bits/mman-linux.h>
-#include "utils.c"
-
+// #include "utils/utils.h"
+#ifndef MAP_ANON
+#define MAP_ANON 0x20
+#endif
 #define _p printf
 
 bool lock = true;
@@ -33,12 +35,14 @@ void ChildProcess() {
     wait(NULL);
     // printf("%d %d\n", pid, a);
     if (pid == 0) {
-        printf("Child");
+        printf("Child\n");
         *val = 10;
+        printf("con: %d\n", *val);
     }
     else if (pid > 0) {
         wait(NULL);
-        _p("%d\n", *val);
+        // _p("%d\n", *val);
+        printf("cha: %d\n", *val);
     }
     munmap(val, sizeof(int));
 }

@@ -13,7 +13,7 @@ Bước 5: Kết thúc chương trình.
 void main() {
     int id;
     id = fork();
-    sleep(10);
+    // sleep(10);
     if (id < 0) {
         printf("cannot create the file");
         exit(-1);

@@ -1,50 +1,38 @@
-#include <stdio.h>
-#include <sys/mman.h>
-#include <bits/mman-linux.h>
-#include <stdlib.h>
+/*
+Sử dụng lệnh wait() để dừng tạm thời tiến trình.
+Thuật toán:
+- Bước 1: Bắt đầu chương trình, khai báo và khởi tạo giá trị cho một biến.
+- Bước 2: Tạo tiến trình con sử dụng lệnh fork().
+- Bước 3: Kiểm tra xem có tạo được tiến trình hay không, tiến trình con được tạo khi pid = 0.
+- Bước 4: Nếu tiến trình con được tạo thì cho tiến trình con in ra màn hình giá trị biến đã được khai báo,
+ sau đó thay đổi giá trị của biến rồi kết thúc tiến trình con.
+- Bước 5: Nếu không phải tiến trình cha thì phải đợi tiến trình con kết thúc hẳn.
+- Bước 6: Kết thúc chương trình.
+*/
 #include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <sys/wait.h>
-#include "./utils.c"
 
 
-int main() {
-    int Number = 5;
-    int* ptr = mmap(NULL, Number * sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANON, 0, 0);
+int e = 10;
 
-    if (ptr == MAP_FAILED) {
-        printf("Mapping Failed\n");
-        return 1;
-    }
-
-    for (int i = 0; i < Number; i++) ptr[i] = i + 7;
-
-
-    printf("Initial array's values:");
-    for (int i = 0; i < Number; i++) printf(" %d", ptr[i]);
-
-    printf("\n");
-    pid_t child_pid = fork();
-
-    if (child_pid == 0) {
-        // child
-        for (int i = 0; i < Number; i++) ptr[i] = ptr[i] * 5;
-
-    }
-    else {
-        // parent
+int main(){
+    int pid = fork();
+    if(pid < 0){
+        printf("bao loi");
+        exit (-1);
+    }else if(pid==0){
+        // printf("tien trinh con");
+        e = 20;        
+        printf("con: %d\n", e);
+        exit(1);
+    }else{
         wait(NULL);
-        printf("\nParent:\n");
-        printf("Updated array's values:");
-        for (int i = 0; i < Number; i++) printf(" %d", ptr[i]);
-        printf("\n");
+        // printf("tien trinh cha");
+        printf("cha: %d\n", e);
+        
     }
-
-    munmap(ptr, Number * sizeof(int));
-
-
-    // if (err != 0) {
-    //     printf("Unmapping Failed\n");
-    //     return 1;
-    // }
+     
     return 0;
 }
