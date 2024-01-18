@@ -2,23 +2,18 @@
 Viết chương trình C mô phỏng quá trình quản lý bộ nhớ theo hình thức phân trang.
 
 THUẬT TOÁN:
-
 - Bước 1: Xác định kích thước trang, kích thước bảng trang, số lượng trang trong bảng trang.
-
 - Bước 2: Nhập vào địa chỉ cơ sở của các trang trong bảng trang.
-
 - Bước 3: Nhập vào địa chỉ logic và dữ liệu của địa chỉ đó.
-
 - Bước 4: Chuyển đổi địa chỉ logic thành địa chỉ vật lý.
-
 - Bước 5: Hiển thị kết quả.
 */
 
 #include <stdio.h>
 #include<stdio_ext.h>
 
-#define PAGE_SIZE 100
-#define PAGE_TABLE_SIZE 128
+#define PAGE_SIZE                                   100
+#define PAGE_TABLE_SIZE                             128
 
 struct pentry { int no; int start_addr; } ptable[PAGE_TABLE_SIZE];
 
@@ -27,11 +22,11 @@ char memory[PAGE_SIZE * PAGE_TABLE_SIZE];
 int get_physical_address(int logical_address) {
     int page_no = logical_address / PAGE_SIZE;
     int offset = logical_address % PAGE_SIZE;
+
     return ptable[page_no].start_addr + offset;
 }
 
-int main()
-{
+int main() {
     int entry_flag = 0, translate_flag = 0, phy_addr, logical_addr;
     char data, choice;
     int n, i;
